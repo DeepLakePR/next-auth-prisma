@@ -17,7 +17,6 @@ import {
     FormLabel,
     FormMessage,
 } from "@/components/ui/form";
-import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
@@ -47,21 +46,21 @@ export default function LoginPage(){
 
     
     return (
-        <section className="login flex items-center justify-center">
+        <section className="login flex">
 
-            <div className="container rounded-[20px] py-10 pb-8 px-6 m-8 bg-white">
+            <div className="container rounded-[20px] py-10 pb-8 px-6 m-8 bg-white lg:pr-[50%]">
                 
                 <div className="logo">
                     <Image 
                         src="/auth/logo.png" 
-                        className="mx-auto"
+                        className="mx-auto lg:mx-0"
                         alt="Logo" 
                         width={200} 
                         height={100} 
                     />
                 </div>
 
-                <div className="page-switcher justify-between w-65 flex my-8 rounded-4xl bg-[#F5F7FD] p-1 mx-auto">
+                <div className="page-switcher justify-between w-65 flex my-8 rounded-4xl bg-[#F5F7FD] p-1 mx-auto lg:mx-0 lg:my-12">
                     <Button className="button-switcher active">Entrar</Button>
                     <Button className="button-switcher"><Link href="/register">Cadastrar</Link></Button>
                 </div>
@@ -144,13 +143,13 @@ export default function LoginPage(){
 
             </div>
 
-            <div className="lg:w-45 lg:bg-red-100 lg:relative lg:h-full">
-                
-                <img src="/auth/auth-background.png" className="fixed h-full w-full inset-0 z-[-1] lg:static" />
-                <h2 className="hidden lg:block text-3xl color-white">
+            <div className="right-0 lg:w-[45%] lg:h-full lg:bg-red-100 lg:fixed self-start">
+
+                <img src="/auth/auth-background.png" className="fixed h-full w-full inset-0 z-[-1] lg:static object-cover" />
+                <h2 className="hidden lg:block text-4xl text-[#1B1D28] w-80 font-bold absolute top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%]">
                     A Revolução do<br/>
                     Marketing por<br/>
-                    <span className="color-[#4FD8CD]">Influência</span>
+                    <span className="text-[#4FD8CD]">Influência</span>
                 </h2>
 
             </div>
