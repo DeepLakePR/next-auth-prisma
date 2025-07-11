@@ -4,7 +4,7 @@ import db from "@/lib/db";
 
 import { hashSync } from "bcrypt-ts";
 
-import { registerSchema } from "./page";
+import { registerSchema } from "@/lib/schemas/register";
 import z from "zod";
 
 export default async function registerAction(formData: z.infer<typeof registerSchema>) {
