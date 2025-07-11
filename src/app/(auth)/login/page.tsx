@@ -1,5 +1,7 @@
 'use client';
 
+import { SessionProvider, signIn } from "next-auth/react";
+
 // Form
 import { useForm } from "react-hook-form";
 
@@ -21,7 +23,10 @@ import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { signIn } from "next-auth/react";
+import { useState } from "react";
+import { AuthRedirect } from "@/components/authRedirect";
+
+// Actions
 
 // Schemas
 const loginSchema = z.object({
@@ -31,6 +36,8 @@ const loginSchema = z.object({
 })
 
 export default function LoginPage(){
+
+    const [submitButtonDisabled, setSubmitButtonDisabled] = useState<boolean>(false);
 
     const loginForm = useForm<z.infer<typeof loginSchema>>({
         resolver: zodResolver(loginSchema),
@@ -42,130 +49,143 @@ export default function LoginPage(){
     })
 
     async function onSubmit(values: z.infer<typeof loginSchema>){
+
+        setSubmitButtonDisabled(true);
         
         const request = await signIn("credentials", {
+            redirect: false,
             email: values.email,
             password: values.password,
+            remember: values.rememberMe,
             callbackUrl: "/dashboard"
         });
 
         if(request?.error){
             console.log(request.error);
 
+        } else if(request?.url){
+            window.location.href = request.url;
+
         }
+
+        setSubmitButtonDisabled(false);
 
     }
     
     return (
-        <section className="login flex">
+        <SessionProvider>
+            <AuthRedirect>
+                <section className="login flex justify-center lg:justify-start">
 
-            <div className="container rounded-[20px] py-10 pb-8 px-6 m-8 bg-white lg:pr-[50%]">
-                
-                <div className="logo">
-                    <Image 
-                        src="/auth/logo.png" 
-                        className="mx-auto lg:mx-0"
-                        alt="Logo" 
-                        width={200} 
-                        height={100} 
-                    />
-                </div>
-
-                <div className="page-switcher justify-between w-65 flex my-8 rounded-4xl bg-[#F5F7FD] p-1 mx-auto lg:mx-0 lg:my-12">
-                    <Link className="button-switcher active" href="#">Entrar</Link>
-                    <Link className="button-switcher" href="/register">Cadastrar</Link>
-                </div>
-
-                <Form {...loginForm}>
-
-                    <h2 className="font-bold text-3xl mb-2 text-2xl">Entrar</h2>
-                    <p className="mb-8 text-lg text-[#697889]">Non sit purus tempus malesuada poten</p>
-
-                    <form onSubmit={loginForm.handleSubmit(onSubmit)}>
+                    <div className="container rounded-[20px] py-10 pb-8 px-6 m-8 bg-white lg:w-[40%] lg:px-10">
                         
-                        <FormField control={loginForm.control} name="email" render={({ field }) => (
-                            <FormItem className="mb-4">
-                                <FormLabel className="mb-1">E-mail</FormLabel>
-
-                                <FormControl>
-                                    <Input type="email" className="py-6 px-4" placeholder="e-mail@website.com" {...field} />
-                                </FormControl>
-
-                                <FormMessage />
-
-                            </FormItem>
-                        )} 
-                        />
-
-                        <FormField control={loginForm.control} name="password" render={({ field }) => (
-                            <FormItem className="mb-4">
-                                <FormLabel className="mb-1">Senha</FormLabel>
-
-                                <FormControl>
-                                    <Input type="password" className="py-6 px-4" placeholder="min 8 caracteres" {...field} />
-                                </FormControl>
-
-                                <FormMessage />
-
-                            </FormItem>
-                        )} 
-                        />
-
-                        <div className="flex justify-between items-center my-6 mt-2">
-
-                            <FormField control={loginForm.control} name="rememberMe" render={({ field }) => (
-                                <FormItem>
-
-                                    <div className="flex">
-                                        <FormControl>
-                                            <Checkbox
-                                                checked={field.value}
-                                                onCheckedChange={field.onChange}
-                                                name={field.name}
-                                                ref={field.ref}
-                                            />
-                                        </FormControl>
-
-                                        <FormLabel className="ml-2">Lembrar</FormLabel>
-                                    </div>
-
-                                    <FormMessage />
-                            
-                                </FormItem>
-                            )} 
+                        <div className="logo">
+                            <Image 
+                                src="/auth/logo.png" 
+                                className="mx-auto lg:mx-0"
+                                alt="Logo" 
+                                width={200} 
+                                height={100} 
                             />
-
-                            <Link href="#forgot-password" className="link">Esqueceu a senha?</Link>
-
                         </div>
 
-                        <Button type="submit" className="w-full py-6 px-12 mb-4">Entrar</Button>
+                        <div className="page-switcher justify-between w-65 flex my-8 rounded-4xl bg-[#F5F7FD] p-1 mx-auto lg:mx-0 lg:my-12">
+                            <Link className="button-switcher active" href="#">Entrar</Link>
+                            <Link className="button-switcher" href="/register">Cadastrar</Link>
+                        </div>
 
-                        <Button type="button" className="w-full py-6 px-12 text-gray-700 bg-white hover:bg-gray-100 border border-gray-300 shadow-xs">
-                            <img src="/auth/google-icon.png" alt="Google auth" className="p-2 w-[40px] h-[40px]"/>
-                            Entrar com o Google
-                        </Button>
-                        
-                    </form>
+                        <Form {...loginForm}>
 
-                </Form>
+                            <h2 className="font-bold text-3xl mb-2 text-2xl">Entrar</h2>
+                            <p className="mb-8 text-lg text-[#697889]">Non sit purus tempus malesuada poten</p>
 
-                <p className="text-center mt-6">Ainda não tem conta? <Link href="/register" className="link">Assine agora</Link></p>
+                            <form onSubmit={loginForm.handleSubmit(onSubmit)}>
+                                
+                                <FormField control={loginForm.control} name="email" render={({ field }) => (
+                                    <FormItem className="mb-4">
+                                        <FormLabel className="mb-1">E-mail</FormLabel>
 
-            </div>
+                                        <FormControl>
+                                            <Input type="email" className="py-6 px-4" placeholder="e-mail@website.com" {...field} />
+                                        </FormControl>
 
-            <div className="right-0 lg:w-[45%] lg:h-full lg:bg-red-100 lg:fixed self-start">
+                                        <FormMessage />
 
-                <img src="/auth/auth-background.png" className="fixed h-full w-full inset-0 z-[-1] lg:static object-cover" />
-                <h2 className="hidden lg:block text-4xl text-[#1B1D28] w-80 font-bold absolute top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%]">
-                    A Revolução do<br/>
-                    Marketing por<br/>
-                    <span className="text-[#4FD8CD]">Influência</span>
-                </h2>
+                                    </FormItem>
+                                )} 
+                                />
 
-            </div>
+                                <FormField control={loginForm.control} name="password" render={({ field }) => (
+                                    <FormItem className="mb-4">
+                                        <FormLabel className="mb-1">Senha</FormLabel>
 
-        </section>
+                                        <FormControl>
+                                            <Input type="password" className="py-6 px-4" placeholder="min 8 caracteres" {...field} />
+                                        </FormControl>
+
+                                        <FormMessage />
+
+                                    </FormItem>
+                                )} 
+                                />
+
+                                <div className="flex justify-between items-center my-6 mt-2">
+
+                                    <FormField control={loginForm.control} name="rememberMe" render={({ field }) => (
+                                        <FormItem>
+
+                                            <div className="flex">
+                                                <FormControl>
+                                                    <Checkbox
+                                                        checked={field.value}
+                                                        onCheckedChange={field.onChange}
+                                                        name={field.name}
+                                                        ref={field.ref}
+                                                    />
+                                                </FormControl>
+
+                                                <FormLabel className="ml-2">Lembrar</FormLabel>
+                                            </div>
+
+                                            <FormMessage />
+                                    
+                                        </FormItem>
+                                    )} 
+                                    />
+
+                                    <Link href="#forgot-password" className="link">Esqueceu a senha?</Link>
+
+                                </div>
+
+                                <Button type="submit" className="w-full py-6 px-12 mb-4" disabled={submitButtonDisabled}>Entrar</Button>
+
+                                <Button type="button" className="w-full py-6 px-12 text-gray-700 bg-white hover:bg-gray-100 border border-gray-300 shadow-xs">
+                                    <img src="/auth/google-icon.png" alt="Google auth" className="p-2 w-[40px] h-[40px]"/>
+                                    Entrar com o Google
+                                </Button>
+                                
+                            </form>
+
+                        </Form>
+
+                        <p className="text-center mt-6">Ainda não tem conta? <Link href="/register" className="link">Assine agora</Link></p>
+
+                    </div>
+
+                    <div className="right-0 lg:w-[45%] lg:h-full lg:bg-red-100 lg:fixed self-start">
+
+                        <img src="/auth/auth-background.png" className="fixed h-full w-full inset-0 z-[-1] lg:static object-cover" />
+                        <h2 className="hidden lg:block text-4xl text-[#1B1D28] w-80 font-bold absolute top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%]">
+                            A Revolução do<br/>
+                            Marketing por<br/>
+                            <span className="text-[#4FD8CD]">Influência</span>
+                        </h2>
+
+                    </div>
+
+                </section>
+            </AuthRedirect>
+        </SessionProvider>
     );
 
 }

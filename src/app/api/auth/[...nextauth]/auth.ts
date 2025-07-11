@@ -10,6 +10,7 @@ export const authOptions = {
             credentials: {
                 email: { label: "E-mail", type: "email" },
                 password: { label: "Senha", type: "password" },
+                remember: { label: "Lembrar", type: "checkbox" },
             },
             async authorize(credentials, req) {
                 
@@ -18,10 +19,10 @@ export const authOptions = {
                 const user = await findUserByCredentials(credentials.email, credentials.password);
 
                 if (user) {
-                    // Ensure the returned user object matches NextAuth's User type
                     return {
                         id: String(user.id),
                         email: user.email,
+                        remember: credentials.remember === "true"
                     };
                 }
 
@@ -30,11 +31,27 @@ export const authOptions = {
         }),
     ],
     callbacks: {
+        async jwt({ token, user }: { token: any, user: any }){
+            if(user){
+                token.remember = user.remember;
+
+                token.exp = Math.floor(Date.now() / 1000) + (user.remember ? 30 * 24 * 60 * 60 : 30 * 60)
+            }
+            return token;
+        },
+        async session({ session, token }: { session: any, token: any }){
+            session.remember = token.remember;
+            return session;
+        },
         async redirect({ url, baseUrl }: { url: string; baseUrl: string }) {
             if(url.startsWith(baseUrl)) return url;
             if(url.startsWith("/")) return baseUrl + url;
             return baseUrl;
         }
+    },
+    session:{
+        strategy: "jwt" as const,
+        maxAge: 30 * 24 * 60 * 30
     },
     pages: {
         signIn: "/login",

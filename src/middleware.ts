@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 
 export default withAuth(
     async function middleware(req){
-        console.log('teste');
+
     },
     {
         callbacks: {
