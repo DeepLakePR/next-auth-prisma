@@ -126,7 +126,7 @@ button{
 }
 
 .button-switcher{
-  @apply rounded-4xl py-2 bg-transparent px-8 text-[#1B1D28] justify-between
+  @apply rounded-4xl py-2 font-semibold h-full bg-transparent px-8 text-[#1B1D28] justify-between
 }
 
 .button-switcher.active{
@@ -135,6 +135,10 @@ button{
 
 .button-switcher:not(.active){
   @apply shadow-none;
+}
+
+.button-switcher:hover{
+  @apply bg-white;
 }
 
 .link{

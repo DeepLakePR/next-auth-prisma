@@ -21,6 +21,7 @@ import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import { signIn } from "next-auth/react";
 
 // Schemas
 const loginSchema = z.object({
@@ -40,10 +41,20 @@ export default function LoginPage(){
         }
     })
 
-    function onSubmit(values: z.infer<typeof loginSchema>){
-        console.log(values);
-    }
+    async function onSubmit(values: z.infer<typeof loginSchema>){
+        
+        const request = await signIn("credentials", {
+            email: values.email,
+            password: values.password,
+            callbackUrl: "/dashboard"
+        });
 
+        if(request?.error){
+            console.log(request.error);
+
+        }
+
+    }
     
     return (
         <section className="login flex">
@@ -61,8 +72,8 @@ export default function LoginPage(){
                 </div>
 
                 <div className="page-switcher justify-between w-65 flex my-8 rounded-4xl bg-[#F5F7FD] p-1 mx-auto lg:mx-0 lg:my-12">
-                    <Button className="button-switcher active">Entrar</Button>
-                    <Button className="button-switcher"><Link href="/register">Cadastrar</Link></Button>
+                    <Link className="button-switcher active" href="#">Entrar</Link>
+                    <Link className="button-switcher" href="/register">Cadastrar</Link>
                 </div>
 
                 <Form {...loginForm}>
@@ -77,7 +88,7 @@ export default function LoginPage(){
                                 <FormLabel className="mb-1">E-mail</FormLabel>
 
                                 <FormControl>
-                                    <Input className="py-6 px-4" placeholder="e-mail@website.com" {...field} />
+                                    <Input type="email" className="py-6 px-4" placeholder="e-mail@website.com" {...field} />
                                 </FormControl>
 
                                 <FormMessage />
@@ -91,7 +102,7 @@ export default function LoginPage(){
                                 <FormLabel className="mb-1">Senha</FormLabel>
 
                                 <FormControl>
-                                    <Input className="py-6 px-4" placeholder="min 8 caracteres" {...field} />
+                                    <Input type="password" className="py-6 px-4" placeholder="min 8 caracteres" {...field} />
                                 </FormControl>
 
                                 <FormMessage />
