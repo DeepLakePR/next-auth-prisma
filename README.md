@@ -12,19 +12,19 @@ A production-minded authentication boilerplate built with Next.js, Auth.js (Next
 - Secure password validation using bcrypt
 - JWT session strategy with optional "remember me" behavior
 
-## 1. The Problem
+## The Problem
 
 Modern web applications need authentication flows that are secure, scalable, and easy to extend. A common challenge is implementing user authentication while keeping the codebase maintainable, protecting private routes, and preparing the system for role-based access control as the application grows.
 
 This project addresses that challenge by providing a focused authentication foundation with database-backed users, encrypted password checks, session handling, and route protection.
 
-## 2. The Solution
+## The Solution
 
 This project is a boilerplate/system focused on security best practices and type-safe database interactions.
 
 It uses Auth.js (NextAuth) with a credentials provider for login, Prisma ORM for strongly typed database operations, and PostgreSQL as the persistence layer. Protected routes are handled through NextAuth middleware, making the project a practical starting point for applications that need private dashboards, session persistence, and future role-based authorization rules.
 
-## 3. Technologies
+## Technologies
 
 - Next.js 14
 - React
@@ -38,7 +38,7 @@ It uses Auth.js (NextAuth) with a credentials provider for login, Prisma ORM for
 - Tailwind CSS
 - shadcn/ui components
 
-## 4. How to Run
+## How to Run
 
 ### Prerequisites
 
